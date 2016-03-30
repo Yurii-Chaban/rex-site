@@ -182,10 +182,10 @@ function get_comment_author_email_link( $linktext = '', $before = '', $after = '
 	 */
 	$email = apply_filters( 'comment_email', $comment->comment_author_email, $comment );
 	if ((!empty($email)) && ($email != '@')) {
-	$display = ($linktext != '') ? $linktext : $email;
+		$display = ($linktext != '') ? $linktext : $email;
 		$return  = $before;
 		$return .= sprintf( '<a href="%1$s">%2$s</a>', esc_url( 'mailto:' . $email ), esc_html( $display ) );
-	 	$return .= $after;
+		$return .= $after;
 		return $return;
 	} else {
 		return '';
@@ -704,7 +704,7 @@ function get_comment_link( $comment = null, $args = array() ) {
 	if ( ! is_null( $args['cpage'] ) ) {
 		$cpage = $args['cpage'];
 
-	// No 'cpage' is provided, so we calculate one.
+		// No 'cpage' is provided, so we calculate one.
 	} else {
 		if ( '' === $args['per_page'] && get_option( 'page_comments' ) ) {
 			$args['per_page'] = get_option('comments_per_page');
@@ -1983,7 +1983,7 @@ function wp_list_comments( $args = array(), $comments = null ) {
 				}
 			}
 
-		// Otherwise, fall back on the comments from `$wp_query->comments`.
+			// Otherwise, fall back on the comments from `$wp_query->comments`.
 		} else {
 			if ( empty($wp_query->comments) )
 				return;
@@ -2003,10 +2003,10 @@ function wp_list_comments( $args = array(), $comments = null ) {
 				if ( 'newest' === $default_comments_page ) {
 					$r['cpage'] = $cpage;
 
-				/*
-				 * When first page shows oldest comments, post permalink is the same as
-				 * the comment permalink.
-				 */
+					/*
+                     * When first page shows oldest comments, post permalink is the same as
+                     * the comment permalink.
+                     */
 				} elseif ( $cpage == 1 ) {
 					$r['cpage'] = '';
 				} else {
@@ -2144,15 +2144,13 @@ function comment_form( $args = array(), $post_id = null ) {
 	$html_req = ( $req ? " required='required'" : '' );
 	$html5    = 'html5' === $args['format'];
 	$fields   =  array(
-		'author' => '<p class="comment-form-author">' . '<label for="author">' . __( 'Name' ) . ( $req ? ' <span class="required">*</span>' : '' ) . '</label> ' .
-		            '<input id="author" name="author" type="text" value="' . esc_attr( $commenter['comment_author'] ) . '" size="30"' . $aria_req . $html_req . ' /></p>',
-		'email'  => '<p class="comment-form-email"><label for="email">' . __( 'Email' ) . ( $req ? ' <span class="required">*</span>' : '' ) . '</label> ' .
-		            '<input id="email" name="email" ' . ( $html5 ? 'type="email"' : 'type="text"' ) . ' value="' . esc_attr(  $commenter['comment_author_email'] ) . '" size="30" aria-describedby="email-notes"' . $aria_req . $html_req  . ' /></p>',
-		'url'    => '<p class="comment-form-url"><label for="url">' . __( 'Website' ) . '</label> ' .
-		            '<input id="url" name="url" ' . ( $html5 ? 'type="url"' : 'type="text"' ) . ' value="' . esc_attr( $commenter['comment_author_url'] ) . '" size="30" /></p>',
+		'author' => '<div class="comment-form-author form-group">' .
+			'<input id="author" name="author" type="text" class="form-control" placeholder="Name" value="' . esc_attr( $commenter['comment_author'] ) . '" size="30"' . $aria_req . $html_req . ' /></div>',
+		'email'  => '<div class="comment-form-email form-group" >' .
+			'<input id="email" name="email" class="form-control" placeholder="Enter Email" ' . ( $html5 ? 'type="email"' : 'type="text"' ) . ' value="' . esc_attr(  $commenter['comment_author_email'] ) . '" size="30" aria-describedby="email-notes"' . $aria_req . $html_req  . ' /></div>',
 	);
 
-	$required_text = sprintf( ' ' . __('Required fields are marked %s'), '<span class="required">*</span>' );
+//	$required_text = sprintf( ' ' . __('Required fields are marked %s'), '<span class="required">*</span>' );
 
 	/**
 	 * Filter the default comment form fields.
@@ -2164,28 +2162,28 @@ function comment_form( $args = array(), $post_id = null ) {
 	$fields = apply_filters( 'comment_form_default_fields', $fields );
 	$defaults = array(
 		'fields'               => $fields,
-		'comment_field'        => '<p class="comment-form-comment"><label for="comment">' . _x( 'Comment', 'noun' ) . '</label> <textarea id="comment" name="comment" cols="45" rows="8"  aria-required="true" required="required"></textarea></p>',
+		'comment_field'        => '<div class="comment-form-comment form-group"> <textarea id="comment" name="comment" cols="45" rows="8"  aria-required="true" required="required"></textarea></div>',
 		/** This filter is documented in wp-includes/link-template.php */
-		'must_log_in'          => '<p class="must-log-in">' . sprintf( __( 'You must be <a href="%s">logged in</a> to post a comment.' ), wp_login_url( apply_filters( 'the_permalink', get_permalink( $post_id ) ) ) ) . '</p>',
+		'must_log_in'          => '<h2 class="must-log-in">' . sprintf( __( 'You must be <a href="%s">logged in</a> to post a comment.' ), wp_login_url( apply_filters( 'the_permalink', get_permalink( $post_id ) ) ) ) . '</h2>',
 		/** This filter is documented in wp-includes/link-template.php */
 		'logged_in_as'         => '<p class="logged-in-as">' . sprintf( __( '<a href="%1$s" aria-label="Logged in as %2$s. Edit your profile.">Logged in as %2$s</a>. <a href="%3$s">Log out?</a>' ), get_edit_user_link(), $user_identity, wp_logout_url( apply_filters( 'the_permalink', get_permalink( $post_id ) ) ) ) . '</p>',
-		'comment_notes_before' => '<p class="comment-notes"><span id="email-notes">' . __( 'Your email address will not be published.' ) . '</span>'. ( $req ? $required_text : '' ) . '</p>',
+//		'comment_notes_before' => '<p class="comment-notes">'. ( $req ? $required_text : '' ) . '</p>',
 		'comment_notes_after'  => '',
-		'id_form'              => 'commentform',
+		'id_form'              => 'comment-form',
 		'id_submit'            => 'submit',
 		'class_form'           => 'comment-form',
-		'class_submit'         => 'submit',
+		'class_submit'         => 'submit button button-default',
 		'name_submit'          => 'submit',
-		'title_reply'          => __( 'Leave a Reply' ),
+		'title_reply'          => __( 'Post a comment' ),
 		'title_reply_to'       => __( 'Leave a Reply to %s' ),
-		'title_reply_before'   => '<h3 id="reply-title" class="comment-reply-title">',
-		'title_reply_after'    => '</h3>',
+		'title_reply_before'   => '<h2 id="reply-title" class="comment-reply-title">',
+		'title_reply_after'    => '</h2>',
 		'cancel_reply_before'  => ' <small>',
 		'cancel_reply_after'   => '</small>',
 		'cancel_reply_link'    => __( 'Cancel reply' ),
-		'label_submit'         => __( 'Post Comment' ),
-		'submit_button'        => '<input name="%1$s" type="submit" id="%2$s" class="%3$s" value="%4$s" />',
-		'submit_field'         => '<p class="form-submit">%1$s %2$s</p>',
+		'label_submit'         => __( '' ),
+		'submit_button'        => '<button name="%1$s" type="submit" data-text="Comment" id="%2$s" class="%3$s" value="%4$s" ><span>Comment</span></button>',
+		'submit_field'         => '%1$s %2$s',
 		'format'               => 'xhtml',
 	);
 

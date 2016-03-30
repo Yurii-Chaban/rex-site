@@ -13,7 +13,7 @@
 						<span class="icon-bar"></span>
 					</button>
 					<!-- LOGO -->
-					<a class="navbar-brand logo" href="<?php the_permalink(); ?>">
+					<a class="navbar-brand logo" href="<?php bloginfo('url'); ?>">
 						<?php if (get_theme_mod('gootheme_logo')) :
 							echo '<img src="' . esc_url(get_theme_mod('gootheme_logo')) . '">';
 						else:
@@ -22,10 +22,20 @@
 					</a>
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
-					<ul id="top-menu" class="nav navbar-nav main-nav menu-scroll">
-						<li><a href="index.html">Home</a></li>
-						<li class="active"><a href="404.html">404 </a></li>
-					</ul>
+					<?php wp_nav_menu(array(
+							'container' => false,
+							'menu_id' => 'top-menu',
+							'menu_class' => 'nav navbar-nav main-nav menu-scroll',
+							'echo' => true,
+							'before' => '',
+							'after' => '',
+							'link_before' => '',
+							'link_after' => '',
+							'depth' => 0,
+							"theme_location" => "404 menu",
+							'walker' => new description_walker())
+					);
+					?>
 				</div><!--/.nav-collapse -->
 				<div class="search-area">
 					<?php get_search_form(); ?>
@@ -43,14 +53,14 @@
 					<div class="error-page-area">
 						<div class="error-no-area">
 							<div class="error-no">
-								<h2>404 Error</h2>
-								<p>Sorry</p>
+								<h2><?php _e('404 Error', 'rex'); ?></h2>
+								<p><?php _e('Sorry', 'rex'); ?></p>
 							</div>
 						</div>
 					</div>
 					<div class="error-message">
-						<h4>Woops! Something gone wrong</h4>
-						<p>Sorry, the page you have requested has either been moved,or does not exist, Return to our <a href="index.html">homepage</a>.</p>
+						<h4><?php _e('Woops! Something gone wrong', 'rex'); ?></h4>
+						<p><?php _e('Sorry, the page you have requested has either been moved,or does not exist, Return to our', 'rex'); ?> <a href="<?php the_permalink();  ?>"><?php _e('homepage', 'rex'); ?></a>.</p>
 					</div>
 				</div>
 			</div>

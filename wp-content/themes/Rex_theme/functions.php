@@ -44,7 +44,9 @@ function rex_setup() {
 
 	// This theme uses wp_nav_menu() in one location.
 	register_nav_menus( array(
-		'primary' => __( 'Primary Menu', 'rex' ),
+		'top' => __( 'Primary Menu', 'rex' ),
+		'404 menu' => __( '404', 'rex' ),
+		'single page' => __( 'single page', 'rex' ),
 	) );
 
 	/*
@@ -70,6 +72,7 @@ function rex_setup() {
 		'quote',
 		'link',
 	) );
+
 
 	// Set up the WordPress core custom background feature.
 	add_theme_support( 'custom-background', apply_filters( 'rex_custom_background_args', array(
@@ -100,7 +103,7 @@ add_action( 'after_setup_theme', 'rex_content_width', 0 );
 function rex_widgets_init() {
 	register_sidebar( array(
 		'name'          => esc_html__( 'Sidebar', 'rex' ),
-		'id'            => 'sidebar-1',
+		'id'            => 'site-sidebar',
 		'description'   => '',
 		'before_widget' => '<section id="%1$s" class="widget %2$s">',
 		'after_widget'  => '</section>',
@@ -109,6 +112,23 @@ function rex_widgets_init() {
 	) );
 }
 add_action( 'widgets_init', 'rex_widgets_init' );
+
+/**
+ * Google fonts.
+ */
+function google_font_styles() {
+	if (!is_admin()) {
+		wp_register_style('opensans', 'https://fonts.googleapis.com/css?family=Open+Sans');
+		wp_enqueue_style('font', get_stylesheet_uri(), array('opensans') );
+
+		wp_register_style('releway', 'https://fonts.googleapis.com/css?family=Raleway');
+		wp_enqueue_style('font', get_stylesheet_uri(), array('releway') );
+
+		wp_register_style('pacifico', 'https://fonts.googleapis.com/css?family=Pacifico');
+		wp_enqueue_style('font', get_stylesheet_uri(), array('pacifico') );
+	}
+}
+add_action('wp_enqueue_scripts', 'google_font_styles');
 
 /**
  * Enqueue scripts and styles.
@@ -120,40 +140,24 @@ function rex_scripts() {
 	/*styles*/
     /*-----------------------*/
 
-	wp_enqueue_style('rex_style', get_template_directory_uri() . '/style.css');
-
-	wp_enqueue_style( 'rex_style1', get_template_directory_uri() . '/assets/css/animate.css');
-
-	wp_enqueue_style( 'rex_style2', get_template_directory_uri() . '/assets/css/bootstrap.css');
+	wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
 
 	wp_enqueue_style( 'rex_style3', get_template_directory_uri() . '/assets/css/font-awesome.css');
 
-	wp_enqueue_style( 'rex_style4', get_template_directory_uri() . '/assets/css/jquery.fancybox.css');
+	wp_enqueue_style( 'rex_style2', get_template_directory_uri() . '/assets/css/bootstrap.css');
+
+	wp_enqueue_style( 'rex_style1', get_template_directory_uri() . '/assets/css/animate.css');
 
 	wp_enqueue_style( 'rex_style5', get_template_directory_uri() . '/assets/css/slick.css');
 
-    wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
+	wp_enqueue_style( 'rex_style4', get_template_directory_uri() . '/assets/css/jquery.fancybox.css');
 
-    /*theme-color*/
-    wp_enqueue_style( 'rex_style6', get_template_directory_uri() . '/assets/css/theme-color/bridge-theme.css');
 
-    wp_enqueue_style( 'rex_style7', get_template_directory_uri() . '/assets/css/theme-color/dark-red-theme.css');
+	/*theme-color*/
 
-    wp_enqueue_style( 'rex_style8', get_template_directory_uri() . '/assets/css/theme-color/default.css');
+	wp_enqueue_style( 'rex_style8', get_template_directory_uri() . '/assets/css/theme-color/default.css');
 
-    wp_enqueue_style( 'rex_style9', get_template_directory_uri() . '/assets/css/theme-color/green-theme.css');
-
-    wp_enqueue_style( 'rex_style10', get_template_directory_uri() . '/assets/css/theme-color/lite-blue-theme.css');
-
-    wp_enqueue_style( 'rex_style11', get_template_directory_uri() . '/assets/css/theme-color/orange-theme.css');
-
-    wp_enqueue_style( 'rex_style12', get_template_directory_uri() . '/assets/css/theme-color/pink-theme.css');
-
-    wp_enqueue_style( 'rex_style13', get_template_directory_uri() . '/assets/css/theme-color/purple-theme.css');
-
-    wp_enqueue_style( 'rex_style14', get_template_directory_uri() . '/assets/css/theme-color/red-theme.css');
-
-    wp_enqueue_style( 'rex_style15', get_template_directory_uri() . '/assets/css/theme-color/yellow-theme.css');
+	wp_enqueue_style('rex_style', get_template_directory_uri() . '/style.css');
 
     /*-----------------------*/
     /*scripts*/
@@ -349,6 +353,43 @@ function create_my_slider_tax()
 	);
 }
 /*__________________________________________________*/
+/*create company logo slider post type*/
+add_action('init', 'create_company_logo_slider_post_type');
+
+function create_company_logo_slider_post_type()
+{
+	register_post_type('company_logo_slider',
+		array(
+			'labels' => array(
+				'name' => __('Company logo slider'),
+				'singular_name' => __('Company logo slider')
+			),
+			'public' => true,
+			'has_archive' => true,
+			'rewrite' => array('slug' => 'company_logo_slider'),
+			'supports' => array('title', 'editor', 'thumbnail'),
+		)
+	);
+}
+
+
+/*__________________________________________________*/
+/*create company_logo taxonomy*/
+add_action('init', 'create_company_logo_slider_tax');
+
+function create_company_logo_slider_tax()
+{
+	register_taxonomy(
+		'company_logo_slider_tax',
+		'company_logo_slider',
+		array(
+			'label' => __('Categories'),
+			'rewrite' => array('slug' => 'company_logo_tax_slider'),
+			'hierarchical' => true,
+		)
+	);
+}
+/*__________________________________________________*/
 /*create about post type*/
 add_action('init', 'create_about_post_type');
 
@@ -380,6 +421,78 @@ function create_about_tax()
         array(
             'label' => __('Categories'),
             'rewrite' => array('slug' => 'about_tax'),
+            'hierarchical' => true,
+        )
+    );
+}
+/*__________________________________________________*/
+/*create nex_description post type*/
+add_action('init', 'create_nex_description_post_type');
+
+function create_nex_description_post_type()
+{
+    register_post_type('nex_description',
+        array(
+            'labels' => array(
+                'name' => __('Nex description'),
+                'singular_name' => __('Nex description')
+            ),
+            'public' => true,
+            'has_archive' => true,
+            'rewrite' => array('slug' => 'nex_description'),
+            'supports' => array('title', 'editor', 'thumbnail'),
+        )
+    );
+}
+
+/*__________________________________________________*/
+/*create nex_description taxonomy*/
+add_action('init', 'create_nex_description_tax');
+
+function create_nex_description_tax()
+{
+    register_taxonomy(
+        'nex_description_tax',
+        'nex_description',
+        array(
+            'label' => __('Categories'),
+            'rewrite' => array('slug' => 'nex_description_tax'),
+            'hierarchical' => true,
+        )
+    );
+}
+/*__________________________________________________*/
+/*create impressive_template post type*/
+add_action('init', 'create_impressive_template_post_type');
+
+function create_impressive_template_post_type()
+{
+    register_post_type('impressive_template',
+        array(
+            'labels' => array(
+                'name' => __('Impressive template'),
+                'singular_name' => __('Impressive template')
+            ),
+            'public' => true,
+            'has_archive' => true,
+            'rewrite' => array('slug' => 'impressive_template'),
+            'supports' => array('title', 'editor', 'thumbnail'),
+        )
+    );
+}
+
+/*__________________________________________________*/
+/*create impressive_template taxonomy*/
+add_action('init', 'create_impressive_template_tax');
+
+function create_impressive_template_tax()
+{
+    register_taxonomy(
+        'impressive_template_tax',
+        'impressive_template',
+        array(
+            'label' => __('Categories'),
+            'rewrite' => array('slug' => 'impressive_template_tax'),
             'hierarchical' => true,
         )
     );
@@ -426,7 +539,7 @@ add_action('init', 'create_services_post_type');
 
 function create_services_post_type()
 {
-    register_post_type('team',
+    register_post_type('services',
         array(
             'labels' => array(
                 'name' => __('Services'),
@@ -568,43 +681,40 @@ function create_pricing_tax()
     );
 }
 /*__________________________________________________*/
-/*create blog post title post type*/
-add_action('init', 'create_blog_post_type');
+/*create contact taxonomy*/
+add_action('init', 'create_contact_tax');
 
-function create_blog_post_type()
+function create_contact_tax()
 {
-    register_post_type('blog',
-        array(
-            'labels' => array(
-                'name' => __('Blog post title'),
-                'singular_name' => __('Blog post title')
-            ),
-            'public' => true,
-            'has_archive' => true,
-            'rewrite' => array('slug' => 'blog'),
-            'supports' => array('title', 'editor', 'thumbnail'),
-        )
-    );
+	register_taxonomy(
+		'contact_tax',
+		'contact',
+		array(
+			'label' => __('Categories'),
+			'rewrite' => array('slug' => 'contact_tax'),
+			'hierarchical' => true,
+		)
+	);
 }
-
-
 /*__________________________________________________*/
-/*create pricing taxonomy*/
-add_action('init', 'create_blog_tax');
+/*create contact post type*/
+add_action('init', 'create_contact_post_type');
 
-function create_blog_tax()
+function create_contact_post_type()
 {
-    register_taxonomy(
-        'blog_tax',
-        'blog',
-        array(
-            'label' => __('Categories'),
-            'rewrite' => array('slug' => 'blog_tax'),
-            'hierarchical' => true,
-        )
-    );
+	register_post_type('contact',
+		array(
+			'labels' => array(
+				'name' => __('Contact'),
+				'singular_name' => __('Contact')
+			),
+			'public' => true,
+			'has_archive' => true,
+			'rewrite' => array('slug' => 'contact'),
+			'supports' => array('title', 'editor', 'thumbnail'),
+		)
+	);
 }
-
 /*__________________________________________________________*/
 /*create logo in theme customize*/
 /*_____________________________________*/
@@ -655,3 +765,242 @@ require get_template_directory() . '/inc/customizer.php';
  * Load Jetpack compatibility file.
  */
 require get_template_directory() . '/inc/jetpack.php';
+
+function qt_custom_breadcrumbs() {
+
+	$showOnHome = 0; // 1 - show breadcrumbs on the homepage, 0 - don't show
+	$delimiter = ' / '; // delimiter between crumbs
+	$home = 'Home'; // text for the 'Home' link
+//	$showCurrent = 1; // 1 - show current post/page title in breadcrumbs, 0 - don't show
+	$before = '<span class="current">'; // tag before the current crumb
+	$after = '</span>'; // tag after the current crumb
+
+	global $post;
+	$homeLink = get_bloginfo('url');
+
+	if (is_home() || is_front_page()) {
+
+		if ($showOnHome == 1) echo '<li id="crumbs" class="active"><a href="' . $homeLink . '">' . $home . '</a></li>';
+
+	} else {
+
+		echo '<li id="crumbs"><a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
+
+		if ( is_category() ) {
+			$thisCat = get_category(get_query_var('cat'), false);
+			if ($thisCat->parent != 0) echo get_category_parents($thisCat->parent, TRUE, ' ' . $delimiter . ' ');
+			echo $before . 'Archive by category "' . single_cat_title('', false) . '"' . $after;
+
+		} elseif ( is_search() ) {
+			echo $before . 'Search results for "' . get_search_query() . '"' . $after;
+
+		} elseif ( is_day() ) {
+			echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+			echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '">' . get_the_time('F') . '</a> ' . $delimiter . ' ';
+			echo $before . get_the_time('d') . $after;
+
+		} elseif ( is_month() ) {
+			echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
+			echo $before . get_the_time('F') . $after;
+
+		} elseif ( is_year() ) {
+			echo $before . get_the_time('Y') . $after;
+
+		} elseif ( is_single() && !is_attachment() ) {
+			if ( get_post_type() != 'post' ) {
+				$post_type = get_post_type_object(get_post_type());
+				$slug = $post_type->rewrite;
+				echo '<a href="' . $homeLink . '/' . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
+				if ($showCurrent == 1) echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
+			} else {
+				$cat = get_the_category(); $cat = $cat[0];
+				$cats = get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
+				if ($showCurrent == 0) $cats = preg_replace("#^(.+)\s$delimiter\s$#", "$1", $cats);
+				echo $cats;
+				if ($showCurrent == 1) echo $before . get_the_title() . $after;
+			}
+
+		} elseif ( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ) {
+			$post_type = get_post_type_object(get_post_type());
+			echo $before . $post_type->labels->singular_name . $after;
+
+		} elseif ( is_attachment() ) {
+			$parent = get_post($post->post_parent);
+			$cat = get_the_category($parent->ID); $cat = $cat[0];
+			echo get_category_parents($cat, TRUE, ' ' . $delimiter . ' ');
+			echo '<a href="' . get_permalink($parent) . '">' . $parent->post_title . '</a>';
+			if ($showCurrent == 1) echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
+
+		} elseif ( is_page() && !$post->post_parent ) {
+			if ($showCurrent == 1) echo $before . get_the_title() . $after;
+
+		} elseif ( is_page() && $post->post_parent ) {
+			$parent_id  = $post->post_parent;
+			$breadcrumbs = array();
+			while ($parent_id) {
+				$page = get_page($parent_id);
+				$breadcrumbs[] = '<a href="' . get_permalink($page->ID) . '">' . get_the_title($page->ID) . '</a>';
+				$parent_id  = $page->post_parent;
+			}
+			$breadcrumbs = array_reverse($breadcrumbs);
+			for ($i = 0; $i < count($breadcrumbs); $i++) {
+				echo $breadcrumbs[$i];
+				if ($i != count($breadcrumbs)-1) echo ' ' . $delimiter . ' ';
+			}
+			if ($showCurrent == 1) echo ' ' . $delimiter . ' ' . $before . get_the_title() . $after;
+
+		} elseif ( is_tag() ) {
+			echo $before . 'Posts tagged "' . single_tag_title('', false) . '"' . $after;
+
+		} elseif ( is_author() ) {
+			global $author;
+			$userdata = get_userdata($author);
+			echo $before . 'Articles posted by ' . $userdata->display_name . $after;
+
+		} elseif ( is_404() ) {
+			echo $before . 'Error 404' . $after;
+		}
+
+		if ( get_query_var('paged') ) {
+			if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ) echo ' (';
+			echo __('Page') . ' ' . get_query_var('paged');
+			if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_tag() || is_author() ) echo ')';
+		}
+
+		echo '</div>';
+
+	}
+} // end qt_custom_breadcrumbs()
+
+class description_walker extends Walker_Nav_Menu
+{
+	function start_el(&$output, $item, $depth, $args)
+	{
+		global $wp_query;
+		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
+
+		$class_names = $value = '';
+
+		$classes = empty( $item->classes ) ? array() : (array) $item->classes;
+
+		$class_names = join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item ) );
+		$class_names = ' class="'. esc_attr( $class_names ) . '"';
+
+		$output .= $indent . '<li id="menu-item-'. $item->ID . '"' . $value . $class_names .'>';
+
+		$attributes  = ! empty( $item->attr_title ) ? ' title="'  . esc_attr( $item->attr_title ) .'"' : '';
+		$attributes .= ! empty( $item->target )     ? ' target="' . esc_attr( $item->target     ) .'"' : '';
+		$attributes .= ! empty( $item->xfn )        ? ' rel="'    . esc_attr( $item->xfn        ) .'"' : '';
+		$attributes .= ! empty( $item->url )        ? ' href="'   . esc_attr( $item->url        ) .'"' : '';
+
+		$description  = ! empty( $item->description ) ? '<span>'.esc_attr( $item->description ).'</span>' : '';
+
+		if($depth != 0)
+		{
+			$description = $append = $prepend = "";
+		}
+
+		$item_output = $args->before;
+		$item_output .= '<a'. $attributes .'>';
+		$item_output .= $args->link_before .$prepend.apply_filters( 'the_title', $item->title, $item->ID ).$append;
+		$item_output .= $description.$args->link_after;
+		$item_output .= '</a>';
+		$item_output .= $args->after;
+
+		$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
+	}
+}
+
+/*--------------*/
+/*Pagination*/
+/*-----------*/
+// numbered pagination
+function pagination($pages = '', $range = 4)
+{
+
+	global $paged;
+	if(empty($paged)) $paged = 1;
+
+	if($pages == '')
+	{
+		global $wp_query;
+		$pages = $wp_query->max_num_pages;
+		if(!$pages)
+		{
+			$pages = 1;
+		}
+	}
+
+	if(1 != $pages)
+	{
+		echo "<ul class=\"pagination blog-pagination\">";
+		if($paged > 1) echo "<li>"."<a href='".get_pagenum_link($paged - 1)."'>&laquo;</a>"."</li>";
+
+		for ($i=1; $i <= $pages; $i++)
+		{
+			if (1 != $pages &&( !($i >= $paged+$range+1 || $i <= $paged-$range-1)))
+			{
+				echo ($paged == $i)? "<li class=\"current\">"."<a href='".get_pagenum_link($i)."'>$i</a>"."</li>":"<li>"."<a href='".get_pagenum_link($i)."'>".$i."</a>"."</li>";
+			}
+		}
+
+		if ($paged < $pages) echo "<li>"."<a href=\"".get_pagenum_link($paged + 1)."\">&raquo;</a>"."</li>";
+		echo "</ul>\n";
+	}
+}
+
+/*---------------------------------*/
+/*------Feedback form------*/
+/*---------------------------------*/
+function custom_form_action_callback() {
+	global $wpdb;
+	global $mail;
+	$nonce=$_POST['nonce'];
+	$rtr='';
+	if (!wp_verify_nonce( $nonce, 'custom_form_action-nonce'))wp_die('{"error":"Error. Spam"}');
+	$message="";
+	$to="shuterrush@gmail.com";
+	$headers = "Content-type: text/html; charset=utf-8 \r\n";
+	$headers.= "From: ".$_SERVER['SERVER_NAME']." \r\n";
+	$subject="Message from site ".$_SERVER['SERVER_NAME'];
+	do_action('plugins_loaded');
+	if (!empty($_POST['name']) && !empty($_POST['mess']) && !empty($_POST['email'])){
+		$message.="Name: ".$_POST['name'];
+		$message.="<br/>E-mail: ".$_POST['email'];
+		$message.="<br/>Message:<br/>".nl2br($_POST['mess']);
+		if(wp_mail($to, $subject, $message, $headers)){
+			$rtr='{"work":"Message send!","error":""}';
+		}else{
+			$rtr='{"error":"Server error."}';
+		}
+	}else{
+		$rtr='{"error":"All fields are required!"}';
+	}
+	echo $rtr;
+	exit;
+}
+add_action('wp_ajax_nopriv_custom_form_send_action', 'custom_form_action_callback');
+add_action('wp_ajax_custom_form_send_action', 'custom_form_action_callback');
+function custom_form_stylesheet(){
+	wp_enqueue_style("custom_form_style_templ",get_bloginfo('stylesheet_directory')."/style.css","0.1.2",true);
+	wp_enqueue_script("custom_form_script_temp",get_bloginfo('stylesheet_directory')."/assets/js//scriptform.js");
+	wp_localize_script("custom_form_script_temp", "custom_form_Ajax", array( 'ajaxurl' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce('custom_form_action-nonce') ) );
+}
+add_action( 'wp_enqueue_scripts', 'custom_form_stylesheet' );
+function formCustom() {
+	$rty='<div class="col-md-8 col-sm-6 col-xs-12">';
+	$rty.='<div class="contact-right wow fadeInRight">';
+	$rty.='<form class="contact-form">';
+	$rty.='<h2>Send a message</h2>';
+	$rty.='<div class="form-group"><input id="name" class="form-control" type="text" placeholder="Name"/></div>';
+	$rty.='<div class="form-group"><input id="email" type="text" class="form-control" placeholder="Enter Email"/></div>';
+	$rty.='<div class="form-group"><textarea id="mess" class="form-control"></textarea></div>';
+	$rty.='<button type="submit"  data-text="SUBMIT" class="button button-default" onclick="custom_form_ajax_send(\'#name\',\'#email\',\'#mess\'); return false;"><span>SUBMIT</span></button>';
+//	$rty.='<div class="line"><input type="submit" data-text="SUBMIT" class="button button-default" onclick="custom_form_ajax_send(\'#name\',\'#email\',\'#mess\'); return false;" value="Отправить"/><span></span></div>';
+	$rty.='</form>';
+	$rty.='</div>';
+	$rty.='</div>';
+	return $rty;
+}
+add_shortcode( 'formCustom', 'formCustom' );
+?>

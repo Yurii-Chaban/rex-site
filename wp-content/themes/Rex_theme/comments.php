@@ -78,7 +78,21 @@ if ( post_password_required() ) {
 		<p class="no-comments"><?php esc_html_e( 'Comments are closed.', 'rex' ); ?></p>
 	<?php
 	endif;
+	function sort_comment_fields( $fields ){
+		$new_fields = array();
+		$myorder = array('author','email','comment'); // порядок полей
 
+		foreach( $myorder as $key ){
+			$new_fields[ $key ] = $fields[ $key ];
+			unset( $fields[ $key ] );
+		}
+
+		if( $fields )
+			foreach( $fields as $key => $val )
+				$new_fields[ $key ] = $val;
+		return $new_fields;
+	}
+	add_filter('comment_form_fields', 'sort_comment_fields' );
 	comment_form();
 	?>
 
